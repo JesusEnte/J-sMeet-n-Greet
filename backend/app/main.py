@@ -3,11 +3,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import core.config
+import core.db
 import api.router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # check if db is running
+    engine = core.db.connect()
     yield
 
 app = FastAPI(
