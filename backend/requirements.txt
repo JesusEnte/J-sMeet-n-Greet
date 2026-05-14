@@ -2,7 +2,6 @@ python-dotenv
 
 fastapi[standard]
 pydantic
-sqlmodel
 SQLAlchemy
 psycopg2
 alembic
