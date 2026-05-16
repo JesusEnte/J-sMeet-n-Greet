@@ -1,8 +1,8 @@
-"""first migration
+"""first revision
 
-Revision ID: 9dd0a0d6b9a5
+Revision ID: 630738aa1713
 Revises: 
-Create Date: 2026-05-15 00:43:52.688898
+Create Date: 2026-05-16 03:01:41.212711
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9dd0a0d6b9a5'
+revision: str = '630738aa1713'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,19 +24,20 @@ def upgrade() -> None:
     op.create_table('sessions_table',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
+    sa.Column('last_updated', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users_table',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('session_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['session_id'], ['sessions_table.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('free_timespans_table',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('start', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('end', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
+    sa.Column('start', sa.DateTime(), nullable=False),
+    sa.Column('end', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('session_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['session_id'], ['sessions_table.id'], ),
