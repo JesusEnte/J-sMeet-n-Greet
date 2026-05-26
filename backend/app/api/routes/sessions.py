@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from ..dependencies import DbDep
 from util.id_generators import create_session_id
@@ -33,8 +33,11 @@ async def create(session_create: Create, db: DbDep):
 @router.put('/{session_id}', response_model=Response)
 async def update(session_id: str, session_update: Update, db: DbDep):
     session_db = db.get(Sessions, session_id)
+    if session_db is None:
+        raise HTTPException(404, 'Session not found')
+    
     session_db.name = session_update.name
-    db.add(session_db)
+    session_db.update_last_access()
     db.commit()
 
     session_response = Response(
