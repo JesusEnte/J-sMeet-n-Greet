@@ -2,16 +2,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import core.db
 import api.router
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    engine = core.db.connect()
-    yield
-
 app = FastAPI(
-    lifespan=lifespan,
     title='J\'sMeet\'n\'Greet API',
     docs_url='/api/docs'
 )

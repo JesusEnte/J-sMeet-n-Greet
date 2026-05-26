@@ -1,6 +1,7 @@
 from typing import List
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy import ForeignKey, Date, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from datetime import date
 
 class Base(DeclarativeBase):
     pass
@@ -10,10 +11,13 @@ class Sessions(Base):
     id: Mapped[str] = mapped_column(primary_key=True, default=None)
 
     name: Mapped[str] = mapped_column()
-    last_updated: Mapped[DateTime] = mapped_column(DateTime)
+    last_access: Mapped[Date] = mapped_column(Date)
 
     users: Mapped[List['Users']] = relationship(back_populates='session', cascade='all, delete-orphan')
     free_timespans: Mapped[List['Free_timespans']] = relationship(back_populates='session', cascade='all, delete-orphan')
+
+    def update_last_access(self):
+        self.last_access = date.today()
 
 
 class Users(Base):
