@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from app.models.db import Base
+from models.db import Base
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
@@ -25,14 +25,14 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-from app.core.config import settings
+from core.config import settings
 section = config.config_ini_section
 config.set_section_option(section, 'POSTGRES_HOST', 'localhost' if settings['DEV_MODE'] else 'db',)
 config.set_section_option(section, 'POSTGRES_PORT', "5432")
 config.set_section_option(section, 'POSTGRES_USER', settings['POSTGRES_USER'])
 config.set_section_option(section, 'POSTGRES_PASSWORD', settings['POSTGRES_PASSWORD'])
 
-from app.core.db import url
+from core.db import url
 config.set_main_option('sqlalchemy.url', url.render_as_string(hide_password=False))
 
 def run_migrations_offline() -> None:
