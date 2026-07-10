@@ -1,0 +1,14 @@
+.navbar {
+    height: 100px;
+    display: grid;
+    grid-template-columns: repeat(5, 100px);
+    background-color: rgba(190, 0, 149, 0.493);
+    align-items: center;
+    justify-items: center;
+}
+
+.navbar-icon {
+    width: 75%;
+    height: 75%;
+    border-radius: 10px;
+}
