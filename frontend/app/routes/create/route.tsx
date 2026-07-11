@@ -1,4 +1,6 @@
-import type { Route } from "./+types/create";
+import type { Route } from "./+types/route";
+import { Form } from "react-router";
+import './create.css'
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,5 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Create(){
-    return <p>create</p>
+    return <Form>
+      
+    </Form>
 }

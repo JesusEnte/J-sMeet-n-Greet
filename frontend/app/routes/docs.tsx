@@ -8,5 +8,5 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Docs(){
-    return <p>docs</p>
+    return <p>https://github.com/JesusEnte/JsMeetnGreet</p>
 }

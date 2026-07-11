@@ -24,9 +24,8 @@ function HighlightedNavLink(props: NavLinkProps){
 export default function Navbar() {
     return (
         <nav className='navbar'>
-            <img src='/favicon.ico' className='navbar-icon'/>
             <HighlightedNavLink to='/' end>
-                Home
+                <img src='/favicon.ico' className='navbar-icon'/>
             </HighlightedNavLink>
             <HighlightedNavLink to='/join' end>
                 Join
