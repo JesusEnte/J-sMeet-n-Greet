@@ -6,7 +6,7 @@ import api.router
 
 app = FastAPI(
     title='J\'sMeet\'n\'Greet API',
-    docs_url='/api/docs'
+    docs_url='/docs'
 )
 
 app.add_middleware(

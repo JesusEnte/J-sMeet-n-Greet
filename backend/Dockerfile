@@ -9,4 +9,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app .
 
-CMD ["fastapi", "run"]
+CMD ["fastapi", "run", "--root-path", "/api"]
+EXPOSE 8000

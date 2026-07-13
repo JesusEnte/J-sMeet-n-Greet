@@ -7,7 +7,7 @@ url = URL.create(
     username=settings['POSTGRES_USER'],
     password=settings['POSTGRES_PASSWORD'],
     database=settings['POSTGRES_DB'],
-    host='localhost' if settings['DEV_MODE'] else 'db',
+    host= 'db',
     port=5432
 )
 

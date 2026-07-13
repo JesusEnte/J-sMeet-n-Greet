@@ -27,7 +27,7 @@ target_metadata = Base.metadata
 # ... etc.
 from core.config import settings
 section = config.config_ini_section
-config.set_section_option(section, 'POSTGRES_HOST', 'localhost' if settings['DEV_MODE'] else 'db',)
+config.set_section_option(section, 'POSTGRES_HOST', 'db',)
 config.set_section_option(section, 'POSTGRES_PORT', "5432")
 config.set_section_option(section, 'POSTGRES_USER', settings['POSTGRES_USER'])
 config.set_section_option(section, 'POSTGRES_PASSWORD', settings['POSTGRES_PASSWORD'])

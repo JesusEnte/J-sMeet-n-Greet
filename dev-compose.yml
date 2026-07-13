@@ -1,4 +1,17 @@
 services:
+  traefik:
+    image: traefik:v3.7
+    command:
+      - --providers.docker=true
+      - --api.insecure=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   db:
     image: postgres:18
     restart: always
@@ -14,9 +27,6 @@ services:
       - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
-      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
-      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
     ports:
       - 5432:5432
 
@@ -29,7 +39,7 @@ services:
   backend:
     build:
       context: backend
-    command: fastapi dev --host 0.0.0.0
+    command: fastapi dev --host 0.0.0.0 --root-path /api
     develop:
       watch:
         - action: sync
@@ -37,9 +47,12 @@ services:
           target: usr/src/app
     env_file:
       - .env
-    ports:
-      - 8000:8000
-
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
+      - traefik.http.middlewares.backend-strip.stripprefix.prefixes=/api
+      - traefik.http.routers.backend.middlewares=backend-strip
+      
   frontend:
     build:
       context: frontend
@@ -49,9 +62,10 @@ services:
         - action: sync
           path: frontend/app
           target: /app/app
-    ports: 
-      - 5173:5173
-      
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=!PathPrefix(`/api`)
     
+
 volumes:
   dev-app-db-data:

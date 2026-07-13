@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from .routes import sessions, users, free_timespans
 
 router = APIRouter(
-    prefix='/api',
     tags=['api']
 )
 
