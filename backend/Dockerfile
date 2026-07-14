@@ -1,5 +1,5 @@
 FROM python:3-slim
-WORKDIR usr/src/app
+WORKDIR usr/src
 
 RUN apt-get update && \
     apt-get install -y libpq-dev gcc
@@ -7,7 +7,8 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app .
+COPY app ./app
+COPY scripts ./scripts
 
 CMD ["fastapi", "run", "--root-path", "/api"]
 EXPOSE 8000
