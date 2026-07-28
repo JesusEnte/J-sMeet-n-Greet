@@ -6,7 +6,8 @@ from models.db import Sessions
 from models.api.sessions import Create, Update, Response
 
 router = APIRouter(
-    prefix='/sessions'
+    prefix='/sessions',
+    tags=['sessions']
 )
 
 @router.post('', response_model=Response)

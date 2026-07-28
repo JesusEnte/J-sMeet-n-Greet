@@ -6,7 +6,8 @@ from models.db import Sessions, Users
 from models.api.users import Create, Update, Response
 
 router = APIRouter(
-    prefix='/{session_id}/users'
+    prefix='/{session_id}/users',
+    tags=['users']
 )
 
 @router.get('/', response_model=list[Response])

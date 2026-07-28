@@ -1,5 +1,5 @@
+import { sessionCreate } from "~/api/session";
 import type { Route } from "./+types/route";
-import { Form } from "react-router";
 import './create.css'
 
 export function meta({}: Route.MetaArgs) {
@@ -9,8 +9,26 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Create(){
-    return <Form>
+export default function Create({params}: Route.ComponentProps){
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+      event.preventDefault()
       
-    </Form>
+      const target = event.target
+      const formData = new FormData(target)
+      const name = formData.get('name') as string
+      if (name === '') return
+
+      const {id} = await sessionCreate(name)
+      window.location.pathname = id
+
+    }
+    
+    return <div className='createFormContainer'>
+      <form onSubmit={handleSubmit} className='createForm'>
+        <label htmlFor='createNameInput'>Name</label>
+        <p>What's the name of your event?</p>
+        <input id='createNameInput' name='name' type='text' placeholder='Fluppenfreunde Lake Meetup'/>
+        <input type='submit' value='Create!'/>
+      </form>
+    </div>
 }
