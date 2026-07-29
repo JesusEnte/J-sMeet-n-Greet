@@ -9,7 +9,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Create({params}: Route.ComponentProps){
+export default function Create(){
     async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
       event.preventDefault()
       
@@ -20,7 +20,6 @@ export default function Create({params}: Route.ComponentProps){
 
       const {id} = await sessionCreate(name)
       window.location.pathname = id
-
     }
     
     return <div className='createFormContainer'>
