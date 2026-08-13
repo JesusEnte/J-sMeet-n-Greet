@@ -1,6 +1,6 @@
 import { sessionCreate } from "~/api/session";
 import type { Route } from "./+types/route";
-import './create.css'
+import './style.css'
 
 export function meta({}: Route.MetaArgs) {
   return [

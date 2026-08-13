@@ -1,5 +1,5 @@
 import type { Route } from "./+types/route";
-import './join.css';
+import './style.css';
 
 export function meta({}: Route.MetaArgs) {
   return [
