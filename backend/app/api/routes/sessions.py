@@ -10,6 +10,18 @@ router = APIRouter(
     tags=['sessions']
 )
 
+@router.get('/{session_id}', response_model=Response)
+async def get(session_id: str, db: DbDep):
+    session_db = db.get(Sessions, session_id)
+    if session_db is None:
+        raise HTTPException(404, 'Session not found')
+
+    session_response = Response(
+        name = session_db.name,
+        id = session_db.id
+    )
+    return session_response
+
 @router.post('', response_model=Response)
 async def create(session_create: Create, db: DbDep):
     id = create_session_id()
