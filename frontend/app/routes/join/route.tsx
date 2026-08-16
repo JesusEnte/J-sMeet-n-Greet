@@ -1,5 +1,7 @@
+import { sessionGet } from "~/api/session";
 import type { Route } from "./+types/route";
 import './style.css';
+import { useState } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,7 +11,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Join(){
-    function handleSubmit(event: React.SubmitEvent<HTMLFormElement>){
+    const [error, setError] = useState(false)
+
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>){
       event.preventDefault()
       
       const target = event.target
@@ -17,13 +21,19 @@ export default function Join(){
       const id = formData.get('id') as string
       if (id === '') return
 
-      window.location.pathname = id
+      if ((await sessionGet(id)).id != undefined) {
+        window.location.pathname = id
+      } else {
+        setError(true)
+      }
+
     }
 
     return <div className='joinFormContainer'>
       <form onSubmit={handleSubmit} className='joinForm'>
         <label htmlFor='joinIdInput'>ID</label>
         <input id='joinIdInput' name='id' placeholder='XXXXX'/>
+        {error ? <p className='error'>There is no session with that ID, try again.</p> : null}
         <input type='submit' value='Join!'/>
       </form>
     </div>

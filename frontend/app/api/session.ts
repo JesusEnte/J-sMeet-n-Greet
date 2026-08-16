@@ -15,7 +15,6 @@ export async function sessionCreate(name: string): Promise<SessionResponse> {
 
 export async function sessionGet(id: string): Promise<SessionResponse> {
     const response = await apiCall<SessionResponse>(`sessions/${id}`, 'GET')
-    console.log(response)
     return {
         id: response.id,
         name:response.name
