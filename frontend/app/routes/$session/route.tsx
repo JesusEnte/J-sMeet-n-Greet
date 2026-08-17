@@ -1,6 +1,6 @@
 import { sessionGet } from "~/api/session";
 import type { Route } from "./+types/route";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use, Suspense } from "react";
 
 export function meta({ params }: Route.MetaArgs) {
   const [name, setName] = useState(params.session)
@@ -16,11 +16,10 @@ export function meta({ params }: Route.MetaArgs) {
 }
 
 export default function Session({params}: Route.ComponentProps){
-  const [name, setName] = useState('')
-  useEffect(() => {
-    (async () => {
-      setName((await sessionGet(params.session)).name)
-    })()
-  }, [])
-  return <p>session {name} {params.session}</p>
+  return <p>session <Suspense fallback={<p>Loading...</p>}> <Test id={params.session}/> </Suspense> {params.session}</p>
+}
+
+function Test({id}: {id: string}){
+  const name = use(sessionGet(id)).name
+  return <p>{name}</p>
 }

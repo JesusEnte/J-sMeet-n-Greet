@@ -5,18 +5,10 @@ interface SessionResponse {
     name: string
 }
 
-export async function sessionCreate(name: string): Promise<SessionResponse> {
-    const response = await apiCall<SessionResponse>('sessions', 'POST', {name: name})
-    return {
-        id: response.id,
-        name: response.name
-    }
+export function sessionCreate(name: string): Promise<SessionResponse> {
+    return apiCall<SessionResponse>('sessions', 'POST', {name: name}) satisfies Promise<SessionResponse>
 }
 
-export async function sessionGet(id: string): Promise<SessionResponse> {
-    const response = await apiCall<SessionResponse>(`sessions/${id}`, 'GET')
-    return {
-        id: response.id,
-        name:response.name
-    }
+export function sessionGet(id: string): Promise<SessionResponse> {
+    return apiCall<SessionResponse>(`sessions/${id}`, 'GET') satisfies Promise<SessionResponse>
 }
