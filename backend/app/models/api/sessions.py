@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Base(BaseModel):
     name: str
@@ -6,8 +7,8 @@ class Base(BaseModel):
 class Create(Base):
     pass
 
-class Update(Base):
-    pass
+class Update(BaseModel):
+    name: Optional[str]
 
 class Response(Base):
     id: str

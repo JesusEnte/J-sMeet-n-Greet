@@ -49,7 +49,11 @@ async def update(session_id: str, session_update: Update, db: DbDep):
     if session_db is None:
         raise HTTPException(404, 'Session not found')
     
-    session_db.name = session_update.name
+    for [k, v] in session_update:
+        if v is not None:
+            print(f'{k}: {v}')
+            setattr(session_db, k, v)
+        
     session_db.update_last_access()
     db.commit()
 
