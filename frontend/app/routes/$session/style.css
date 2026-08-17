@@ -1,0 +1,36 @@
+.sessionLayout {
+    display: grid;
+    height: 90svh;
+    grid-template-rows: 10% 90%;
+}
+
+.sessionHeaderLayout {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    align-items: center;
+}
+
+.sessionHeaderLayout > * {
+    font-size: 1.5em;
+    height: 2em;
+}
+
+.sessionName {
+    border: 2px solid white;
+    border-radius: 7px;
+    width: 90%;
+}
+
+.userSelect {
+    border: 2px solid white;
+    border-radius: 7px;
+    width: 90%;
+}
+
+.brushSelect {
+    display: flex;
+    border: 2px solid white;
+    border-radius: 7px;
+    width: 90%;
+    gap: 10px;
+}

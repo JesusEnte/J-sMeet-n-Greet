@@ -1,6 +1,6 @@
 import { NavLink, type NavLinkProps } from "react-router";
 import { useLocation } from "react-router";
-import './navbar.css'
+import './style.css'
 import 'react'
 
 

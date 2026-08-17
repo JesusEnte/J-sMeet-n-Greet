@@ -4,10 +4,7 @@
     background-color: rgba(190, 0, 149, 0.493);
     align-items: center;
     justify-items: center;
-}
-
-.navbar > * {
-    margin: 10px;
+    gap: 10px;
 }
 
 .navbar-icon {
