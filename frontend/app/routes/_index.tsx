@@ -9,7 +9,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return <>
-    <p>home</p>
+    <p>Homie Page</p>
     <img src='/favicon.ico'/>
   </>
 }
