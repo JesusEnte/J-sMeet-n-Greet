@@ -1,10 +1,10 @@
 .navbar {
-    height: 75px;
     display: flex;
     background-color: rgba(190, 0, 149, 0.493);
     align-items: center;
     justify-items: center;
     gap: 10px;
+    padding: 10px;
 }
 
 .navbar-icon {

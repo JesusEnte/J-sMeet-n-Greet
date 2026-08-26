@@ -4,6 +4,8 @@ import { useEffect, useState, use, Suspense, useTransition } from "react";
 import './style.css'
 import { RotatingLines } from "react-loader-spinner";
 import { invalidateApiCache } from "~/api/common";
+import erase_icon from './erase.jpg'
+import draw_icon from './draw.jpg'
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -22,9 +24,9 @@ export default function Session({params}: Route.ComponentProps){
         <UserSelect id={id}/>
         <BrushSelect brush={brush} setBrush={setBrush}/>
       </Suspense>
-      <div style={{display: 'block', width: '100%', border: '2px solid white'}}>
+    </div>
+    <div style={{display: 'block', width: '100%', border: '2px solid white'}}>
 
-      </div>
     </div>
   </div>
 }
@@ -37,7 +39,7 @@ function SessionName({id}: {id: string}){
     if (event.key != 'Enter') return
     const target = event.target as HTMLInputElement
     const value = target.value
-    if (value != '' && value != name) {
+    if (value != '') {
     startTransition(async () => {
         await sessionUpdate(id, value)
         invalidateApiCache()
@@ -52,10 +54,10 @@ function SessionName({id}: {id: string}){
 }
 
 function UserSelect({id}: {id: string}){
-  const test = ['ben', 'linuz', 'sarah', 'sarah']
+  const users = ['ben', 'linuz', 'sarah', 'sarah']
   return <select className='userSelect'>
     <option style={{color: 'cyan'}}>All</option>
-    {test.map(n => 
+    {users.map(n => 
       <option>{n}</option>
     )}
     <option style={{color: 'green'}}>Add</option>
@@ -65,7 +67,15 @@ function UserSelect({id}: {id: string}){
 
 function BrushSelect({brush, setBrush}: {brush: string, setBrush: React.Dispatch<React.SetStateAction<string>>}){
   return <div className='brushSelect'>
-    <button style={{...(brush != 'draw' && {color: 'gray'})}} onClick={() => {setBrush('draw')}}>draw</button>
-    <button style={{...(brush != 'erase' && {color: 'gray'})}} onClick={() => {setBrush('erase')}}>erase</button>
+    <img 
+      style={{...(brush != 'draw' && {opacity: 0.5})}} 
+      onClick={() => {setBrush('draw')}}
+      src={draw_icon}
+    />
+    <img 
+      style={{...(brush != 'erase' && {opacity: 0.5})}} 
+      onClick={() => {setBrush('erase')}}
+      src={erase_icon}
+    />
   </div>
 }
