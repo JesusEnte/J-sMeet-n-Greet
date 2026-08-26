@@ -1,6 +1,7 @@
 import { sessionCreate } from "~/api/session";
 import type { Route } from "./+types/route";
 import './style.css'
+import { invalidateApiCache } from "~/api/common";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,6 +20,7 @@ export default function Create(){
       if (name === '') return
 
       const {id} = await sessionCreate(name)
+      invalidateApiCache()
       window.location.pathname = id
     }
     

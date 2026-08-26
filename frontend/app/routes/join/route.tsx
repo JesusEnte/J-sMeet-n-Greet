@@ -2,6 +2,7 @@ import { sessionGet } from "~/api/session";
 import type { Route } from "./+types/route";
 import './style.css';
 import { useState } from "react";
+import { invalidateApiCache } from "~/api/common";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,6 +23,7 @@ export default function Join(){
       if (id === '') return
 
       if ((await sessionGet(id)).id != undefined) {
+        invalidateApiCache()
         window.location.pathname = id
       } else {
         setError(true)

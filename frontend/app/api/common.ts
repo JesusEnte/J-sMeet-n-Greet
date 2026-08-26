@@ -1,4 +1,4 @@
-//promise cache for use hook using Path
+//promise cache for use hook using method and path as key
 const getPromiseCache = new Map<string, Promise<any>>()
 
 export function apiCall<R>(
@@ -6,9 +6,10 @@ export function apiCall<R>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     body?: any
 ): Promise<R> {
+    const cacheKey = `${method} ${path}`
     //check cache
-    if (method == 'GET' && getPromiseCache.has(path)) {
-        return getPromiseCache.get(path)! satisfies Promise<R>
+    if (getPromiseCache.has(cacheKey)) {
+        return getPromiseCache.get(cacheKey)! satisfies Promise<R>
     }
 
     //fetch otherwise
@@ -20,9 +21,8 @@ export function apiCall<R>(
     .then( response => response.json())
 
     //update cache
-    if (method == 'GET') {
-        getPromiseCache.set(path, promise)
-    }
+    getPromiseCache.set(cacheKey, promise)
+    
     //return
     return promise satisfies Promise<R>
 }
