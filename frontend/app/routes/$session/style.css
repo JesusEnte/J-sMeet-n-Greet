@@ -32,3 +32,22 @@
     display: flex;
     width: fit-content;
 }
+
+*:focus {
+    outline: none
+}
+
+.calendar {
+    display: grid;
+    margin: 10px;
+    border-radius: 7px;
+    border: 2px solid white;
+    grid-template-rows: 10% 90%;
+    font-size: 1.5em;
+}
+
+.weekSelector {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: rgba(190, 0, 149, 0.137);
+}

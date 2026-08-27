@@ -1,12 +1,13 @@
 import { sessionGet, sessionUpdate } from "~/api/session";
 import type { Route } from "./+types/route";
-import { useState, use, Suspense, useTransition } from "react";
+import { useState, use, Suspense, useTransition, useRef } from "react";
 import './style.css'
 import { RotatingLines } from "react-loader-spinner";
 import { invalidateApiCache } from "~/api/common";
 import erase_icon from './erase.jpg'
 import draw_icon from './draw.jpg'
 import { createUser, removeUser, usersGet } from "~/api/user";
+import { dateToMonday, dateToShortISO } from "~/utils/date";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -29,9 +30,7 @@ export default function Session({params}: Route.ComponentProps){
       </Suspense>
         <BrushSelect brush={brush} setBrush={setBrush}/>
     </div>
-    <div style={{display: 'block', width: '100%', border: '2px solid white'}}>
-
-    </div>
+    <Calendar/>
   </div>
 }
 
@@ -159,4 +158,50 @@ function BrushSelect({brush, setBrush}: {brush: string, setBrush: React.Dispatch
       src={erase_icon}
     />
   </div>
+}
+
+function Calendar(){
+  return <div className='calendar'>
+    <WeekSelector/>
+  </div>
+}
+
+function WeekSelector(){
+  const dateRef = useRef<HTMLInputElement>(null)
+  
+  return <div className='weekSelector'>
+    <button
+      onClick={() => {
+        let date = dateRef.current!.valueAsDate
+        if (!date) return
+        date.setDate(date.getDate() - 7)
+        date = dateToMonday(date)
+        dateRef.current!.value = dateToShortISO(date)
+      }}
+    >&lt;</button>
+    <input 
+      ref={dateRef} 
+      type='date' 
+      defaultValue={dateToShortISO(dateToMonday(new Date()))}
+      onChange={() => {
+        let date = dateRef.current!.valueAsDate
+        if (!date) return
+        date = dateToMonday(date)
+        dateRef.current!.value = dateToShortISO(date)
+      }}
+    />
+    <button
+      onClick={() => {
+        let date = dateRef.current!.valueAsDate
+        if (!date) return
+        date.setDate(date.getDate() + 7)
+        date = dateToMonday(date)
+        dateRef.current!.value = dateToShortISO(date)
+      }}
+    >&gt;</button>
+  </div>
+}
+
+function Week(){
+
 }
