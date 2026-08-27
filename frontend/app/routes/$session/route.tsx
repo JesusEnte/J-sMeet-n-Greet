@@ -1,11 +1,12 @@
 import { sessionGet, sessionUpdate } from "~/api/session";
 import type { Route } from "./+types/route";
-import { useEffect, useState, use, Suspense, useTransition } from "react";
+import { useState, use, Suspense, useTransition } from "react";
 import './style.css'
 import { RotatingLines } from "react-loader-spinner";
 import { invalidateApiCache } from "~/api/common";
 import erase_icon from './erase.jpg'
 import draw_icon from './draw.jpg'
+import { createUser, removeUser, usersGet } from "~/api/user";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -16,14 +17,17 @@ export function meta({ params }: Route.MetaArgs) {
 
 export default function Session({params}: Route.ComponentProps){
   const [brush, setBrush] = useState('draw')
+  const [user, setUser] = useState<string | null>(null)
   const id = params.session
   return <div className='sessionLayout'>
     <div className='sessionHeaderLayout'>
-      <Suspense fallback={<h1>Loading...</h1>}>
+      <Suspense fallback={<p>Loading...</p>}>
         <SessionName id={id}/>
-        <UserSelect id={id}/>
-        <BrushSelect brush={brush} setBrush={setBrush}/>
       </Suspense>
+      <Suspense fallback={<p>Loading...</p>}>
+        <UserSelect session_id={id} setUser={setUser} activeUser={user}/>
+      </Suspense>
+        <BrushSelect brush={brush} setBrush={setBrush}/>
     </div>
     <div style={{display: 'block', width: '100%', border: '2px solid white'}}>
 
@@ -39,12 +43,11 @@ function SessionName({id}: {id: string}){
     if (event.key != 'Enter') return
     const target = event.target as HTMLInputElement
     const value = target.value
-    if (value != '') {
+    if (value == '') return
     startTransition(async () => {
-        await sessionUpdate(id, value)
-        invalidateApiCache()
-      })
-    }
+      await sessionUpdate(id, value)
+      invalidateApiCache()
+    })
   }
 
   return <div style={{display: 'flex', alignContent: 'center'}}>
@@ -53,15 +56,93 @@ function SessionName({id}: {id: string}){
   </div>
 }
 
-function UserSelect({id}: {id: string}){
-  const users = ['ben', 'linuz', 'sarah', 'sarah']
-  return <select className='userSelect'>
-    <option style={{color: 'cyan'}}>All</option>
-    {users.map(n => 
-      <option>{n}</option>
+function UserSelect({session_id, activeUser, setUser}: {session_id: string, activeUser: string | null, setUser: React.Dispatch<React.SetStateAction<string | null>>}){
+  const users = use(usersGet(session_id))
+  const [add, toggleAdd] = useState(false)
+  const [remove, toggleRemove] = useState(false)
+  
+  //add/remove eventhandlers
+  async function addOnEnter(event: React.KeyboardEvent<HTMLInputElement>){
+    if (event.key != 'Enter') return
+    toggleAdd(false)
+    const target = event.target as HTMLInputElement
+    const value = target.value
+    if (value == '') return
+    //add user via apicall
+    const {id} = await createUser(session_id, value)
+    invalidateApiCache()
+    setUser(id)
+  }
+  async function removeOnEnter(event: React.KeyboardEvent<HTMLInputElement>){
+    if (event.key != 'Enter') return
+    toggleRemove(false)
+    const target = event.target as HTMLInputElement
+    const value = target.value
+    //remove user (if existing) via apicall
+    let id = null
+    for (const user of users) {
+      if (user.name == value) {
+        id = user.id
+        break
+      }
+    }
+    if (id == null) return
+
+    await removeUser(session_id, id)
+    invalidateApiCache()
+    setUser(null)
+  }
+
+  //add/remove input fields
+  if (add) {
+    return <input 
+      className='userSelect'
+      placeholder="Add"
+      onKeyDown={addOnEnter}
+    />
+  }
+  if (remove) {
+    return <input 
+      className='userSelect'
+      placeholder="Remove"
+      onKeyDown={removeOnEnter}
+    />
+  }
+
+  //selection
+  return <select className='userSelect'
+    onChange={(event) => {
+      const target = event.target as HTMLSelectElement
+      const value = target.value
+      if (value == 'remove') toggleRemove(true)
+      else if (value == 'add') toggleAdd(true)
+    }}
+  >
+    {/*All button*/}
+    <option 
+      style={{color: 'cyan'}}
+      onClick={() => {setUser(null)}}
+      selected={activeUser == null}
+    >All</option>
+
+    {/*Individual users button*/}
+    {users.map(user => 
+      <option 
+        key={user.id}
+        onClick={() => {setUser(user.id)}}
+        selected={activeUser == user.id}
+      >{user.name}</option>
     )}
-    <option style={{color: 'green'}}>Add</option>
-    <option style={{color: 'red'}}>Remove</option>
+
+    {/*Add/Remove buttons*/}
+    <option 
+      style={{color: 'green'}}
+      value='add'
+    >Add</option>
+    <option 
+      style={{color: 'red'}}
+      value='remove'
+    >Remove</option>
   </select>
 }
 
