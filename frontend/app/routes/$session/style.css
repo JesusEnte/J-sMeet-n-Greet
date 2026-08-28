@@ -42,12 +42,38 @@
     margin: 10px;
     border-radius: 7px;
     border: 2px solid white;
-    grid-template-rows: 10% 90%;
+    grid-template-rows: auto auto;
     font-size: 1.5em;
+    height: min-content;
 }
 
 .weekSelector {
     display: flex;
     justify-content: space-evenly;
-    background-color: rgba(190, 0, 149, 0.137);
+    background-color: rgba(190, 0, 149, 0.39);
+}
+
+.week {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 5px;
+    border: 1px solid white;
+    border-radius: 2px;
+    height: fit-content;
+}
+
+.day {
+    display: grid;
+    grid-template-rows: auto auto repeat(24, 1fr);
+    width: 100%;
+    border-left: 1px solid white;
+    text-align: center;
+}
+
+.hour {
+    font-size: 1.5svh;
+    border-bottom: 1px solid gray;
+    color: gray;
+    user-select: none;
 }

@@ -7,7 +7,7 @@ import { invalidateApiCache } from "~/api/common";
 import erase_icon from './erase.jpg'
 import draw_icon from './draw.jpg'
 import { createUser, removeUser, usersGet } from "~/api/user";
-import { dateToMonday, dateToShortISO } from "~/utils/date";
+import { dateToMonday, dateToShortISO, dayToDayname } from "~/utils/date";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -110,6 +110,7 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
 
   //selection
   return <select className='userSelect'
+    defaultValue={activeUser ? activeUser : undefined}
     onChange={(event) => {
       const target = event.target as HTMLSelectElement
       const value = target.value
@@ -121,7 +122,6 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
     <option 
       style={{color: 'cyan'}}
       onClick={() => {setUser(null)}}
-      selected={activeUser == null}
     >All</option>
 
     {/*Individual users button*/}
@@ -129,7 +129,6 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
       <option 
         key={user.id}
         onClick={() => {setUser(user.id)}}
-        selected={activeUser == user.id}
       >{user.name}</option>
     )}
 
@@ -161,47 +160,65 @@ function BrushSelect({brush, setBrush}: {brush: string, setBrush: React.Dispatch
 }
 
 function Calendar(){
+  const [date, setDate] = useState(dateToMonday(new Date()))
   return <div className='calendar'>
-    <WeekSelector/>
+    <WeekSelector date={date} setDate={setDate}/>
+    <Week startDate={date}/>
   </div>
 }
 
-function WeekSelector(){
-  const dateRef = useRef<HTMLInputElement>(null)
-  
+function WeekSelector({date, setDate}: {date: Date, setDate: React.Dispatch<React.SetStateAction<Date>>}){
+  const inputRef = useRef<HTMLInputElement>(null)
+
   return <div className='weekSelector'>
     <button
       onClick={() => {
-        let date = dateRef.current!.valueAsDate
-        if (!date) return
-        date.setDate(date.getDate() - 7)
-        date = dateToMonday(date)
-        dateRef.current!.value = dateToShortISO(date)
+        let newDate = new Date(date)
+        newDate.setDate(date.getDate() - 7)
+        newDate = dateToMonday(newDate)
+        setDate(newDate)
       }}
     >&lt;</button>
     <input 
-      ref={dateRef} 
-      type='date' 
-      defaultValue={dateToShortISO(dateToMonday(new Date()))}
+      ref={inputRef} 
+      type='date'
+      value={dateToShortISO(date)}
       onChange={() => {
-        let date = dateRef.current!.valueAsDate
-        if (!date) return
-        date = dateToMonday(date)
-        dateRef.current!.value = dateToShortISO(date)
+        setDate(dateToMonday(inputRef.current!.valueAsDate!))
       }}
     />
     <button
       onClick={() => {
-        let date = dateRef.current!.valueAsDate
-        if (!date) return
-        date.setDate(date.getDate() + 7)
-        date = dateToMonday(date)
-        dateRef.current!.value = dateToShortISO(date)
+        let newDate = new Date(date)
+        newDate.setDate(date.getDate() + 7)
+        newDate = dateToMonday(newDate)
+        setDate(newDate)
       }}
     >&gt;</button>
   </div>
 }
 
-function Week(){
+function Week({startDate}: {startDate: Date}){
+  let day = []
+  for (let i = 0; i < 7; i++){
+    let date = new Date(startDate)
+    date.setDate(startDate.getDate()  + i)
+    day[i] = <Day date={date}/>
+  }
+  return <div className="week">
+    {...day}
+  </div>
+}
 
+function Day({date}: {date: Date}){
+  let hours = []
+  for (let i = 0; i < 24; i++){
+    hours[i] = <p className='hour'>{i}</p>
+  }
+
+  return <div className='day'>
+    <p style={{backgroundColor: 'rgba(190, 0, 149, 0.46)'}}>{dayToDayname(date.getDay())}</p>
+    <p style={{backgroundColor: 'rgba(190, 0, 149, 0.22)'}}>{String(date.getDate()).padStart(2, '0')}</p>
+    {...hours}
+  </div>
 }
