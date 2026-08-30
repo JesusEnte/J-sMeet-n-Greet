@@ -76,10 +76,10 @@ async def update(session_id: str, user_id: int, user_update: Update, db: DbDep):
 @router.delete('/{user_id}', response_model=str)
 async def delete(session_id: str, user_id: int, db: DbDep):
     user_db = db.get(Users, user_id)
+    if user_db is None:
+        raise HTTPException(404, 'User not found')
     if user_db.session.id != session_id:
         raise HTTPException(403, 'User isnt part of the given session')
-    if user_db is None:
-        return f'Fail: User {user_id} not found'
     
     user_db.session.update_last_access()
     db.delete(user_db)
