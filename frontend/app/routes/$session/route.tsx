@@ -11,7 +11,7 @@ import { dateToMonday, dateToShortISO, dayToDayname } from "~/utils/date";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
-    { title: `J'sMeet'n'Greet` },
+    { title: `${params.session} | J'sMeet'n'Greet` },
     { name: "description", content: "Session" },
   ];
 }
