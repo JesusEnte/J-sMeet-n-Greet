@@ -1,4 +1,4 @@
-import { sessionCreate } from "~/api/session";
+import { sessionCreate } from "~/api/sessions";
 import type { Route } from "./+types/route";
 import './style.css'
 import { invalidateApiCache } from "~/api/common";

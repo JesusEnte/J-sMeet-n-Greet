@@ -1,4 +1,4 @@
-import { sessionGet } from "~/api/session";
+import { sessionGet } from "~/api/sessions";
 import type { Route } from "./+types/route";
 import './style.css';
 import { useState } from "react";

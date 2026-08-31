@@ -2,7 +2,7 @@ import { use, useTransition } from "react"
 
 import { RotatingLines } from "react-loader-spinner"
 
-import { sessionGet, sessionUpdate } from "~/api/session"
+import { sessionGet, sessionUpdate } from "~/api/sessions"
 import { invalidateApiCache } from "~/api/common"
 
 export default function SessionName({id}: {id: string}){

@@ -1,6 +1,6 @@
 import { use, useState } from "react"
 
-import { usersGet,  userCreate, userRemove} from "~/api/user"
+import { usersGet,  userCreate, userRemove} from "~/api/users"
 import { invalidateApiCache } from "~/api/common"
 
 export default function UserSelect({session_id, activeUser, setUser}: {session_id: string, activeUser: string, setUser: React.Dispatch<React.SetStateAction<string>>}){
