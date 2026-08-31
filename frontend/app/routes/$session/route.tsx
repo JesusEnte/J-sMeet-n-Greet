@@ -8,6 +8,9 @@ import erase_icon from './erase.jpg'
 import draw_icon from './draw.jpg'
 import { createUser, removeUser, usersGet } from "~/api/user";
 import { dateToMonday, dateToShortISO, dayToDayname } from "~/utils/date";
+import SessionIdContext from "~/contexts/session_id";
+import UserIdContext from "~/contexts/user_id";
+import BrushContext from "~/contexts/brush";
 
 export function meta({ params }: Route.MetaArgs) {
   return [
@@ -18,19 +21,33 @@ export function meta({ params }: Route.MetaArgs) {
 
 export default function Session({params}: Route.ComponentProps){
   const [brush, setBrush] = useState('draw')
-  const [user, setUser] = useState<string | null>(null)
+  const [user, setUser] = useState<string>('all')
   const id = params.session
   return <div className='sessionLayout'>
+    
     <div className='sessionHeaderLayout'>
+      
       <Suspense fallback={<p>Loading...</p>}>
         <SessionName id={id}/>
       </Suspense>
+      
       <Suspense fallback={<p>Loading...</p>}>
         <UserSelect session_id={id} setUser={setUser} activeUser={user}/>
       </Suspense>
-        <BrushSelect brush={brush} setBrush={setBrush}/>
+        
+      <BrushSelect brush={brush} setBrush={setBrush}/>
+
     </div>
-    <Calendar/>
+
+    <SessionIdContext value={id}>
+    <UserIdContext value={user}>
+    <BrushContext value={brush}>
+      
+      <Calendar/>
+    
+    </BrushContext>
+    </UserIdContext>
+    </SessionIdContext>
   </div>
 }
 
@@ -55,7 +72,7 @@ function SessionName({id}: {id: string}){
   </div>
 }
 
-function UserSelect({session_id, activeUser, setUser}: {session_id: string, activeUser: string | null, setUser: React.Dispatch<React.SetStateAction<string | null>>}){
+function UserSelect({session_id, activeUser, setUser}: {session_id: string, activeUser: string, setUser: React.Dispatch<React.SetStateAction<string>>}){
   const users = use(usersGet(session_id))
   const [add, toggleAdd] = useState(false)
   const [remove, toggleRemove] = useState(false)
@@ -89,7 +106,7 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
 
     await removeUser(session_id, id)
     invalidateApiCache()
-    setUser(null)
+    setUser('all')
   }
 
   //add/remove input fields
@@ -110,7 +127,7 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
 
   //selection
   return <select className='userSelect'
-    defaultValue={activeUser ? activeUser : undefined}
+    defaultValue={activeUser}
     onChange={(event) => {
       const target = event.target as HTMLSelectElement
       const value = target.value
@@ -121,7 +138,7 @@ function UserSelect({session_id, activeUser, setUser}: {session_id: string, acti
     {/*All button*/}
     <option 
       style={{color: 'cyan'}}
-      onClick={() => {setUser(null)}}
+      onClick={() => {setUser('all')}}
     >All</option>
 
     {/*Individual users button*/}
@@ -199,26 +216,26 @@ function WeekSelector({date, setDate}: {date: Date, setDate: React.Dispatch<Reac
 }
 
 function Week({startDate}: {startDate: Date}){
-  let day = []
+  let dayComponents = []
   for (let i = 0; i < 7; i++){
     let date = new Date(startDate)
     date.setDate(startDate.getDate()  + i)
-    day[i] = <Day date={date}/>
+    dayComponents[i] = <Day date={date}/>
   }
   return <div className="week">
-    {...day}
+    {...dayComponents}
   </div>
 }
 
 function Day({date}: {date: Date}){
-  let hours = []
+  let hourComponents = []
   for (let i = 0; i < 24; i++){
-    hours[i] = <p className='hour'>{i}</p>
+    hourComponents[i] = <p className='hour'>{i}</p>
   }
 
   return <div className='day'>
     <p style={{backgroundColor: 'rgba(190, 0, 149, 0.46)'}}>{dayToDayname(date.getDay())}</p>
     <p style={{backgroundColor: 'rgba(190, 0, 149, 0.22)'}}>{String(date.getDate()).padStart(2, '0')}</p>
-    {...hours}
+    {...hourComponents}
   </div>
 }
