@@ -19,7 +19,6 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
             .select_from(Users)
             .join(Days, Days.user_id == Users.id, isouter=True)
         ).all()
-        print(hours_db)
 
         if len(hours_db) == 0:
             hours = b'\0\0\0'
@@ -30,7 +29,6 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
             for v in hours_db:
                 for i in range(3):
                     hours[i] = hours[i] & v[i]
-                    print(hours)
 
         session_db = db.get(Sessions, session_id)
         session_db.update_last_access()
@@ -59,7 +57,7 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
 
         user_db.session.update_last_access()
         db.commit()
-        print(day_db.hours)
+        
         return Response (
             date = date,
             hours = day_db.hours if day_db is not None else b'\0\0\0'
