@@ -1,0 +1,9 @@
+.week {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 5px;
+    border: 1px solid white;
+    border-radius: 2px;
+    height: fit-content;
+}
