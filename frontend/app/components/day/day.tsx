@@ -53,6 +53,7 @@ export default function Day({date}: {date: Date}){
           event.changedTouches[0].pageX,
           event.changedTouches[0].pageY
         ) as HTMLParagraphElement
+        if (['availableHour', 'busyHour'].includes(target.className) == false) return
         mobileEnd = Number.parseInt(target.innerText)
         
         if (mobileEnd < mobileStart) [mobileEnd, mobileStart] = [mobileStart, mobileEnd]
