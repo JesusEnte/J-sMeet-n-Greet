@@ -18,6 +18,7 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
         hours_db = db.scalars(select(Days.hours)
             .select_from(Users)
             .join(Days, Days.user_id == Users.id, isouter=True)
+            .where(Days.date == date)
         ).all()
 
         if len(hours_db) == 0:
