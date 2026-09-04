@@ -15,6 +15,9 @@ export default function Day({date}: {date: Date}){
   const session_id = useContext(SessionIdContext)
   const user_id = useContext(UserIdContext)
   const brush = useContext(BrushContext)
+
+  let mobileStart = 0
+  let mobileEnd = 0
   
   const day = use(dayGet(session_id, user_id, date))
   let hours = day.hours
@@ -39,6 +42,33 @@ export default function Day({date}: {date: Date}){
       onMouseDown={() => {
         onHourEdit(i)
       }}
+      onTouchStart={() => {
+        if (user_id == 'all') return
+        mobileStart = i
+      }}
+      onTouchEnd={(event) => {
+        if (user_id == 'all') return
+        
+        const target = document.elementFromPoint(
+          event.changedTouches[0].pageX,
+          event.changedTouches[0].pageY
+        ) as HTMLParagraphElement
+        mobileEnd = Number.parseInt(target.innerText)
+        
+        if (mobileEnd < mobileStart) [mobileEnd, mobileStart] = [mobileStart, mobileEnd]
+        const count = mobileEnd - mobileStart + 1;
+        const mask = ((1 << count) - 1) << mobileStart;
+        if (brush == 'draw') {
+          hours = hours | mask
+        } else if (brush == 'erase') {
+          hours = hours & ~mask
+        }
+
+        startTransition(async () => {
+          await dayUpdate(session_id, user_id, date, hours)
+        })
+      }}
+      
     >
       {i}
     </p>
