@@ -34,7 +34,7 @@ export default function Session({params}: Route.ComponentProps){
       <Suspense fallback={<p>Loading...</p>}>
         <UserSelect session_id={id} setUser={setUser} activeUser={user}/>
       </Suspense>
-      <BrushSelect brush={brush} setBrush={setBrush}/>
+      <BrushSelect brush={brush} setBrush={setBrush} active={user != 'all'}/>
 
     </div>
 
