@@ -6,12 +6,13 @@ interface UserResponse {
 }
 
 export function usersGet(session_id: string): Promise<UserResponse[]> {
-    const cached = getApiCache(`${session_id}/users`)
+    const path = `${session_id}/users`
+    const cached = getApiCache(path)
     if (cached != undefined) {
         return cached
     } else {
-        const response = apiCall<UserResponse[]>(`${session_id}/users`, 'GET') satisfies Promise<UserResponse[]>
-        setApiCache(`${session_id}/users`, response)
+        const response = apiCall<UserResponse[]>(path, 'GET') satisfies Promise<UserResponse[]>
+        setApiCache(path, response)
         return response
     }
 }

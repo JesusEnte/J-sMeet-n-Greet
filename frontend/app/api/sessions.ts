@@ -10,21 +10,23 @@ export function sessionCreate(name: string): Promise<SessionResponse> {
 }
 
 export function sessionGet(id: string): Promise<SessionResponse> {
-    const cached = getApiCache(`sessions/${id}`)
+    const path = `sessions/${id}`
+    const cached = getApiCache(path)
     if (cached != undefined) {
         return cached
     } else {
-        const response = apiCall<SessionResponse>(`sessions/${id}`, 'GET') satisfies Promise<SessionResponse>
-        setApiCache(`sessions/${id}`, response)
+        const response = apiCall<SessionResponse>(path, 'GET') satisfies Promise<SessionResponse>
+        setApiCache(path, response)
         return response
     }
     
 }
 
 export function sessionUpdate(id: string, name?: string): Promise<SessionResponse> {
-    invalidateApiCache(`sessions/${id}`)
+    const path = `sessions/${id}`
+    invalidateApiCache(path)
     const body = {
         name
     }
-    return apiCall<SessionResponse>(`sessions/${id}`, 'PUT', body)
+    return apiCall<SessionResponse>(path, 'PUT', body)
 }
