@@ -63,21 +63,28 @@ export default function UserSelect({session_id, activeUser, setUser}: {session_i
     onChange={(event) => {
       const target = event.target as HTMLSelectElement
       const value = target.value
-      if (value == 'remove') toggleRemove(true)
-      else if (value == 'add') toggleAdd(true)
+      if (value == 'remove') {
+        toggleRemove(true)
+      }
+      else if (value == 'add') { 
+        toggleAdd(true)
+      }
+      else {
+        setUser(value)
+      }
     }}
   >
     {/*All button*/}
     <option 
       style={{color: 'cyan'}}
-      onClick={() => {setUser('all')}}
+      value='all'
     >All</option>
 
     {/*Individual users button*/}
     {users.map(user => 
       <option 
         key={user.id}
-        onClick={() => {setUser(user.id)}}
+        value={user.id}
       >{user.name}</option>
     )}
 
