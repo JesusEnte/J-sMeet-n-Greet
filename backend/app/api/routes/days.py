@@ -5,7 +5,7 @@ from ..dependencies import DbDep
 from util.id_generators import create_random_id
 from models.db import Days, Users, Sessions
 from models.api.days import Response, Update
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, or_
 
 router = APIRouter(
     prefix='/{session_id}/{user_id}/days',
@@ -17,8 +17,11 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
     if user_id == 'all':
         hours_db = db.scalars(select(Days.hours)
             .select_from(Users)
-            .join(Days, Days.user_id == Users.id, isouter=True)
-            .where(Days.date == date)
+            .join(Days, 
+                and_(
+                    (Users.id==Days.user_id),
+                    (Days.date==date)), 
+                isouter=True)
         ).all()
 
         if len(hours_db) == 0:
