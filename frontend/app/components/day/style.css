@@ -6,9 +6,17 @@
     text-align: center;
 }
 
-.hour {
+.availableHour, .busyHour {
     font-size: 1.5svh;
-    border-bottom: 1px solid gray;
-    color: gray;
     user-select: none;
+    border-bottom: 1px solid gray;
+}
+
+.availableHour {
+    color: rgb(255, 0, 200);
+    background-color: rgb(63, 63, 63);
+}
+
+.busyHour {
+    color: gray;
 }
