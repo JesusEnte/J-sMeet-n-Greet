@@ -40,6 +40,7 @@ services:
     build:
       context: backend
     command: fastapi dev --host 0.0.0.0 --root-path /api
+    restart: always
     develop:
       watch:
         - action: sync
