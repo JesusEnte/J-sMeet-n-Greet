@@ -1,12 +1,13 @@
 import type { Route } from "./+types/route";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, use } from "react";
 
 import SessionName from "~/components/session_name";
 import UserSelect from "~/components/user_select";
 import BrushSelect from "~/components/brush_select";
 import Calendar from "~/components/calendar/calendar";
 
+import { sessionGet } from "~/api/sessions";
 
 import SessionIdContext from "~/contexts/session_id";
 import UserIdContext from "~/contexts/user_id";
@@ -24,7 +25,12 @@ export function meta({ params }: Route.MetaArgs) {
 export default function Session({params}: Route.ComponentProps){
   const [brush, setBrush] = useState('draw')
   const [user, setUser] = useState<string>('all')
-  const id = params.session
+  const id = params.session.toLowerCase()
+
+  if (use(sessionGet(id)).id == undefined) {
+    return <h1>404 not found</h1>
+  }
+
   return <div className='sessionLayout'>
     
     <div className='sessionHeaderLayout'>

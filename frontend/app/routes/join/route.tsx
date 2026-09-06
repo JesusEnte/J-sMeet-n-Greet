@@ -19,7 +19,7 @@ export default function Join(){
       
       const target = event.target
       const formData = new FormData(target)
-      const id = formData.get('id') as string
+      const id = (formData.get('id') as string).toLowerCase()
       if (id === '') return
 
       if ((await sessionGet(id)).id != undefined) {
