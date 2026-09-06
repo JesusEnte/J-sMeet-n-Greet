@@ -1,6 +1,6 @@
 import { useRef } from "react"
 
-import { dateToMonday, dateToShortISO } from "~/utils/date"
+import { dateToMonday, dateToString } from "~/utils/date"
 
 import './style.css'
 
@@ -19,7 +19,7 @@ export default function WeekSelector({date, setDate}: {date: Date, setDate: Reac
     <input 
       ref={inputRef} 
       type='date'
-      value={dateToShortISO(date)}
+      value={dateToString(date)}
       onChange={() => {
         setDate(dateToMonday(inputRef.current!.valueAsDate!))
       }}

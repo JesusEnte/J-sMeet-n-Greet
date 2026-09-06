@@ -1,4 +1,4 @@
-import { dateToShortISO } from "~/utils/date"
+import { dateToString } from "~/utils/date"
 import { apiCall, getApiCache, setApiCache, invalidateApiCache } from "./common"
 
 interface RawDayResponse {
@@ -20,7 +20,7 @@ function rawDayToDay(raw: RawDayResponse): DayResponse {
 }
 
 export function dayGet(session_id: string, user_id: string | number, date: Date): Promise<DayResponse> {
-    const path = `${session_id}/${user_id}/days/${dateToShortISO(date)}`
+    const path = `${session_id}/${user_id}/days/${dateToString(date)}`
     const cached = getApiCache(path)
     if (cached != undefined) {
         return cached
@@ -35,8 +35,8 @@ export function dayGet(session_id: string, user_id: string | number, date: Date)
 }
 
 export function dayUpdate(session_id: string, user_id: string | number, date: Date, hours: number): Promise<DayResponse> {
-    const path = `${session_id}/${user_id}/days/${dateToShortISO(date)}`
-    invalidateApiCache(`${session_id}/all/days/${dateToShortISO(date)}`)
+    const path = `${session_id}/${user_id}/days/${dateToString(date)}`
+    invalidateApiCache(`${session_id}/all/days/${dateToString(date)}`)
     
     const dayResponse = (async () => {
         const body = {

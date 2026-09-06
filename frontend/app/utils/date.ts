@@ -1,5 +1,8 @@
-export function dateToShortISO(date: Date): string {
-    return date.toISOString().split('T', 1)[0]
+export function dateToString(date: Date): string {
+    const yyyy = date.getFullYear().toString().padStart(4, '0')
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0')
+    const dd = date.getDate().toString().padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
 }
 
 export function dateToMonday(date: Date): Date {
