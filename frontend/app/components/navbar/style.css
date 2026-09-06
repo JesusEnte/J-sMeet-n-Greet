@@ -1,5 +1,6 @@
 .navbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto auto auto 1fr;
     background-color: rgba(190, 0, 149, 0.493);
     align-items: center;
     justify-items: center;
@@ -11,4 +12,8 @@
     width: 50px;
     height: 50px;
     border-radius: 10px;
+}
+
+.code {
+    justify-self: end;
 }

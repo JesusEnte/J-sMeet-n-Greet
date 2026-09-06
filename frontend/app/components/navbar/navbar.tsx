@@ -5,8 +5,8 @@ import 'react'
 
 
 function HighlightedNavLink(props: NavLinkProps){
-    let location = useLocation().pathname
-    let highlighted = location == props.to
+    const location = useLocation().pathname
+    const highlighted = location == props.to
 
     return (
         <NavLink to={props.to}>
@@ -22,6 +22,14 @@ function HighlightedNavLink(props: NavLinkProps){
 }
 
 export default function Navbar() {
+    const location = useLocation().pathname
+    let codeElement
+    if (!['/', '/join', '/create', '/docs'].includes(location)){
+        codeElement = <div className='code'>
+            <p>{location.replaceAll('/', '').toUpperCase()}</p>
+        </div>
+    }
+
     return (
         <nav className='navbar'>
             <HighlightedNavLink to='/' end>
@@ -36,6 +44,7 @@ export default function Navbar() {
             <HighlightedNavLink to='/docs' end>
                 Docs
             </HighlightedNavLink>
+            {codeElement}
         </nav>
     );
 }
