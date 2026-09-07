@@ -1,7 +1,7 @@
 from typing import List
 from sqlalchemy import ForeignKey, Date
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from datetime import date
+import datetime
 
 class Base(DeclarativeBase):
     pass
@@ -11,13 +11,13 @@ class Sessions(Base):
     id: Mapped[str] = mapped_column(primary_key=True, default=None)
 
     name: Mapped[str] = mapped_column()
-    last_access: Mapped[Date] = mapped_column(Date)
+    last_access: Mapped[datetime.date] = mapped_column(Date)
 
     users: Mapped[List['Users']] = relationship(back_populates='session', cascade='all, delete-orphan')
     days: Mapped[List['Days']] = relationship(back_populates='session', cascade='all, delete-orphan')
 
     def update_last_access(self):
-        self.last_access = date.today()
+        self.last_access = datetime.date.today()
 
 
 class Users(Base):
@@ -35,7 +35,7 @@ class Days(Base):
     __tablename__ = 'days_table'
     id: Mapped[int] = mapped_column(primary_key=True, default=None, autoincrement=False)
 
-    date: Mapped[Date] = mapped_column(Date)
+    date: Mapped[datetime.date] = mapped_column(Date)
     hours: Mapped[bytes] = mapped_column()
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users_table.id'), nullable=False)

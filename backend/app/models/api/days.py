@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from typing_extensions import Annotated
-from datetime import date as Date
+import datetime
 import annotated_types
 
 class Base(BaseModel):
@@ -20,7 +20,7 @@ class Update(BaseModel):
     }
 
 class Response(Base):
-    date: Date
+    date: datetime.date
 
     model_config = {
         "ser_json_bytes": "hex",

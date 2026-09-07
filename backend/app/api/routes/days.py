@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from datetime import date as Date
+import datetime
 from ..dependencies import DbDep
 from util.id_generators import create_random_id
 from models.db import Days, Users, Sessions
@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 @router.get('/{date}', response_model=Response)
-async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
+async def get(session_id: str, user_id: int | str, date: datetime.date, db: DbDep):
     if user_id == 'all':
         hours_db = db.scalars(select(Days.hours)
             .select_from(Users)
@@ -70,7 +70,7 @@ async def get(session_id: str, user_id: int | str, date: Date, db: DbDep):
         )
 
 @router.put('/{date}', response_model=Response)
-async def update(session_id: str, user_id: int, date: Date, day_update: Update, db: DbDep):
+async def update(session_id: str, user_id: int, date: datetime.date, day_update: Update, db: DbDep):
     user_db = db.get(Users, user_id)
     if user_db is None:
         raise HTTPException(404, 'User not found')
