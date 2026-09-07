@@ -1,4 +1,4 @@
-from datetime import date
+import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -13,12 +13,12 @@ def setup():
     scheduler.start()
     
 def main():
-    #Cleans up sessions that weren't accessed for 30 days
-    today = date.today()
+    # cleans up sessions that weren't accessed for over 30 days
+    boundary = datetime.date.today() - datetime.timedelta(30)
     with Session(engine) as session:
-        sessions = session.scalars(select(Sessions))
+        stmt = select(Sessions).where(Sessions.last_access < boundary)
+        sessions = session.scalars(stmt)
         for s in sessions:
-            if (today - s.last_access).days > 30:
-                session.delete(s)
+            session.delete(s)
         session.commit()
         
