@@ -87,12 +87,7 @@ async def update(session_id: str, user_id: int, date: datetime.date, day_update:
         )
     )
     if day_db is None:
-        id = create_random_id()
-        while db.get(Days, id) is not None:
-            id = create_random_id()
-
         day_db = Days(
-            id = id,
             date = date,
             hours = bytes(3),
             user = user_db,

@@ -33,12 +33,10 @@ class Users(Base):
 
 class Days(Base):
     __tablename__ = 'days_table'
-    id: Mapped[int] = mapped_column(primary_key=True, default=None, autoincrement=False)
-
-    date: Mapped[datetime.date] = mapped_column(Date)
+    date: Mapped[datetime.date] = mapped_column(Date, nullable=False, primary_key=True)
     hours: Mapped[bytes] = mapped_column()
 
-    user_id: Mapped[int] = mapped_column(ForeignKey('users_table.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users_table.id'), nullable=False, primary_key=True)
     user: Mapped['Users'] = relationship(back_populates='days')
     session_id: Mapped[str] = mapped_column(ForeignKey('sessions_table.id'), nullable=False)
     session: Mapped['Sessions'] = relationship(back_populates='days')
