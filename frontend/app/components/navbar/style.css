@@ -16,4 +16,7 @@
 
 .code {
     justify-self: end;
+    border: 2px solid white;
+    border-radius: 7px;
+    padding: 5px;
 }
