@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+import uuid
 
-from ..dependencies import DbDep
-from util.id_generators import create_random_id
-from models.db import Sessions, Users
+from api.dependencies import DbDep
+from models.db import Users
 from models.api.users import Create, Update, Response
+from util.validate import validate_session_id, validate_user_id
 
 router = APIRouter(
     prefix='/{session_id}/users',
@@ -12,9 +13,7 @@ router = APIRouter(
 
 @router.get('/', response_model=list[Response])
 async def get_list(session_id: str, db: DbDep):
-    session_db = db.get(Sessions, session_id)
-    if session_db is None:
-        raise HTTPException(404, 'User not found')
+    session_db = validate_session_id(db, session_id)
     
     users_response = []
     for u in session_db.users:
@@ -30,21 +29,14 @@ async def get_list(session_id: str, db: DbDep):
 
 @router.post('/', response_model=Response)
 async def create(session_id: str, user_create: Create, db: DbDep):
-    session_db = db.get(Sessions, session_id)
-    if session_db is None:
-        raise HTTPException(404, 'Session not found')
-    
-    id = create_random_id()
-    while db.get(Users, id) is not None:
-        id = create_random_id()
+    validate_session_id(db, session_id)
 
     user_db = Users(
         name = user_create.name,
-        id = id,
         session_id = session_id
     )
     db.add(user_db)
-    db.commit()
+    db.flush()
     user_db.session.update_last_access()
     db.commit()
 
@@ -56,12 +48,8 @@ async def create(session_id: str, user_create: Create, db: DbDep):
     
 
 @router.put('/{user_id}', response_model=Response)
-async def update(session_id: str, user_id: int, user_update: Update, db: DbDep):
-    user_db = db.get(Users, user_id)
-    if user_db is None:
-        raise HTTPException(404, 'User not found')
-    if user_db.session.id != session_id:
-        raise HTTPException(403, 'User isnt part of the given session')
+async def update(session_id: str, user_id: uuid.UUID, user_update: Update, db: DbDep):
+    user_db = validate_user_id(db, user_id, session_id)
     
     user_db.name = user_update.name
     user_db.session.update_last_access()
@@ -74,14 +62,11 @@ async def update(session_id: str, user_id: int, user_update: Update, db: DbDep):
     return user_response
 
 @router.delete('/{user_id}', response_model=str)
-async def delete(session_id: str, user_id: int, db: DbDep):
-    user_db = db.get(Users, user_id)
-    if user_db is None:
-        raise HTTPException(404, 'User not found')
-    if user_db.session.id != session_id:
-        raise HTTPException(403, 'User isnt part of the given session')
+async def delete(session_id: str, user_id: uuid.UUID, db: DbDep):
+    user_db = validate_user_id(db, user_id, session_id)
     
     user_db.session.update_last_access()
+    db.flush()
     db.delete(user_db)
     db.commit()
     

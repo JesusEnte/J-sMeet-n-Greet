@@ -1,81 +1,75 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 import datetime
-from ..dependencies import DbDep
-from util.id_generators import create_random_id
-from models.db import Days, Users, Sessions
+import uuid
+from api.dependencies import DbDep
+from models.db import Days, Users
 from models.api.days import Response, Update
 from sqlalchemy import select, and_
+from util.validate import validate_session_id, validate_user_id
 
 router = APIRouter(
-    prefix='/{session_id}/{user_id}/days',
+    prefix='/{session_id}',
     tags=['days']
 )
 
-@router.get('/{date}', response_model=Response)
-async def get(session_id: str, user_id: int | str, date: datetime.date, db: DbDep):
-    if user_id == 'all':
-        hours_db = db.scalars(select(Days.hours)
-            .select_from(Users)
-            .join(Days, 
-                and_(
-                    (Users.id==Days.user_id),
-                    (Days.date==date)), 
-                isouter=True
-            )
-            .where(Users.session_id == session_id)
-        ).all()
+@router.get('/all/days/{date}')
+async def get_all(session_id: str, date: datetime.date, db: DbDep):
+    session_db = validate_session_id(db, session_id)
 
-        if len(hours_db) == 0:
-            hours = b'\0\0\0'
-        elif None in hours_db:
-            hours = b'\0\0\0'
-        else:
-            hours = bytearray(b'\xff\xff\xff')
-            for v in hours_db:
-                for i in range(3):
-                    hours[i] = hours[i] & v[i]
-
-        session_db = db.get(Sessions, session_id)
-        session_db.update_last_access()
-        db.commit()
-
-        return Response (
-            date = date,
-            hours = hours
+    hours_db = db.scalars(select(Days.hours)
+        .select_from(Users)
+        .join(Days, 
+            and_(
+                (Users.id==Days.user_id),
+                (Days.date==date)), 
+            isouter=True
         )
+        .where(Users.session_id == session_id)
+    ).all()
 
+    if len(hours_db) == 0:
+        hours = b'\0\0\0'
+    elif None in hours_db:
+        hours = b'\0\0\0'
     else:
-        user_db = db.get(Users, user_id)
-        if user_db is None:
-            raise HTTPException(404, 'User not found')
-        if user_db.session.id != session_id:
-            raise HTTPException(403, 'User isnt part of the given session')
+        hours = bytearray(b'\xff\xff\xff')
+        for v in hours_db:
+            for i in range(3):
+                hours[i] = hours[i] & v[i]
 
-        day_db = db.scalar(
-            select(Days)
-            .where(
-                and_(Days.user_id == user_id, 
-                Days.date == date
-                )
+    session_db.update_last_access()
+    db.commit()
+
+    return Response (
+        date = date,
+        hours = hours
+    )
+
+@router.get('/{user_id}/days/{date}', response_model=Response)
+async def get(session_id: str, user_id: uuid.UUID, date: datetime.date, db: DbDep):
+    user_db = validate_user_id(db, user_id, session_id)
+
+    day_db = db.scalar(
+        select(Days)
+        .where(
+            and_(Days.user_id == user_id, 
+            Days.date == date
             )
         )
+    )
 
-        user_db.session.update_last_access()
-        db.commit()
-        
-        return Response (
-            date = date,
-            hours = day_db.hours if day_db is not None else b'\0\0\0'
-        )
+    user_db.session.update_last_access()
+    db.commit()
+    
+    return Response (
+        date = date,
+        hours = day_db.hours if day_db is not None else b'\0\0\0'
+    )
 
-@router.put('/{date}', response_model=Response)
-async def update(session_id: str, user_id: int, date: datetime.date, day_update: Update, db: DbDep):
-    user_db = db.get(Users, user_id)
-    if user_db is None:
-        raise HTTPException(404, 'User not found')
-    if user_db.session.id != session_id:
-        raise HTTPException(403, 'User isnt part of the given session')
+@router.put('/{user_id}/days/{date}', response_model=Response)
+async def update(session_id: str, user_id: uuid.UUID, date: datetime.date, day_update: Update, db: DbDep):
+    user_db = validate_user_id(db, user_id, session_id)
 
     day_db = db.scalar(
         select(Days)
@@ -86,6 +80,7 @@ async def update(session_id: str, user_id: int, date: datetime.date, day_update:
             )
         )
     )
+
     if day_db is None:
         day_db = Days(
             date = date,

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+import uuid
 
 class Base(BaseModel):
     name: str
@@ -11,4 +12,4 @@ class Update(BaseModel):
     name: Optional[str]
 
 class Response(Base):
-    id: int
+    id: uuid.UUID

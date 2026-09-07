@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const UserIdContext = createContext<string>(null!)
+const UserIdContext = createContext<string>(undefined!)
 
 export default UserIdContext

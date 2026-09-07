@@ -1,8 +1,8 @@
-"""v0.4
+"""v0.5
 
-Revision ID: 5507db89a277
+Revision ID: ddddcd8b6502
 Revises: 
-Create Date: 2026-09-07 09:28:31.968154
+Create Date: 2026-09-07 10:01:18.531878
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5507db89a277'
+revision: str = 'ddddcd8b6502'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,7 +28,7 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users_table',
-    sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('session_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['session_id'], ['sessions_table.id'], ),
@@ -37,7 +37,7 @@ def upgrade() -> None:
     op.create_table('days_table',
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('hours', sa.LargeBinary(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('session_id', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['session_id'], ['sessions_table.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users_table.id'], ),

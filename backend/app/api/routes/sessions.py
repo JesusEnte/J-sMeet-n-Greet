@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from ..dependencies import DbDep
 from util.id_generators import create_session_id
+from util.validate import validate_session_id
 from models.db import Sessions
 from models.api.sessions import Create, Update, Response
 
@@ -12,9 +13,7 @@ router = APIRouter(
 
 @router.get('/{session_id}', response_model=Response)
 async def get(session_id: str, db: DbDep):
-    session_db = db.get(Sessions, session_id)
-    if session_db is None:
-        raise HTTPException(404, 'Session not found')
+    session_db = validate_session_id(db, session_id)
 
     session_response = Response(
         name = session_db.name,
@@ -45,9 +44,7 @@ async def create(session_create: Create, db: DbDep):
 
 @router.put('/{session_id}', response_model=Response)
 async def update(session_id: str, session_update: Update, db: DbDep):
-    session_db = db.get(Sessions, session_id)
-    if session_db is None:
-        raise HTTPException(404, 'Session not found')
+    session_db = validate_session_id(db, session_id)
     
     for [k, v] in session_update:
         if v is not None:

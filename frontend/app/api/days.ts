@@ -19,7 +19,7 @@ function rawDayToDay(raw: RawDayResponse): DayResponse {
     return day
 }
 
-export function dayGet(session_id: string, user_id: string | number, date: Date): Promise<DayResponse> {
+export function dayGet(session_id: string, user_id: string, date: Date): Promise<DayResponse> {
     const path = `${session_id}/${user_id}/days/${dateToString(date)}`
     const cached = getApiCache(path)
     if (cached != undefined) {
@@ -34,7 +34,7 @@ export function dayGet(session_id: string, user_id: string | number, date: Date)
     }
 }
 
-export function dayUpdate(session_id: string, user_id: string | number, date: Date, hours: number): Promise<DayResponse> {
+export function dayUpdate(session_id: string, user_id: string, date: Date, hours: number): Promise<DayResponse> {
     const path = `${session_id}/${user_id}/days/${dateToString(date)}`
     invalidateApiCache(`${session_id}/all/days/${dateToString(date)}`)
     

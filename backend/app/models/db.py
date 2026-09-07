@@ -1,6 +1,7 @@
 from typing import List
-from sqlalchemy import ForeignKey, Date
+from sqlalchemy import ForeignKey, Date, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+import uuid
 import datetime
 
 class Base(DeclarativeBase):
@@ -22,7 +23,7 @@ class Sessions(Base):
 
 class Users(Base):
     __tablename__ = 'users_table'
-    id: Mapped[int] = mapped_column(primary_key=True, default=None, autoincrement=False)
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
 
     name: Mapped[str] = mapped_column()
 
@@ -36,7 +37,7 @@ class Days(Base):
     date: Mapped[datetime.date] = mapped_column(Date, nullable=False, primary_key=True)
     hours: Mapped[bytes] = mapped_column()
 
-    user_id: Mapped[int] = mapped_column(ForeignKey('users_table.id'), nullable=False, primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey('users_table.id'), nullable=False, primary_key=True)
     user: Mapped['Users'] = relationship(back_populates='days')
     session_id: Mapped[str] = mapped_column(ForeignKey('sessions_table.id'), nullable=False)
     session: Mapped['Sessions'] = relationship(back_populates='days')
